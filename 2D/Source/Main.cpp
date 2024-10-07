@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
             int y = rand() % framebuffer.m_height;
             int x2 = rand() % framebuffer.m_width;
             int y2 = rand() % framebuffer.m_height;
-            framebuffer.DrawLine(x, y, x2, y2, { 255,255,255,255 });
-            //framebuffer.DrawPoint(x, y, { 255,255,255,255 });
-        //framebuffer.DrawRect(10, 10, 100, 100, { 0,255,0,255 });
+            //framebuffer.DrawLine(x, y, x2, y2, { 255,255,255,255 });
+            framebuffer.DrawPoint(x, y, { 255,255,255,255 });
+        framebuffer.DrawRect(10, 10, 100, 100, { 0,255,0,255 });
         }
 
         framebuffer.Update();
