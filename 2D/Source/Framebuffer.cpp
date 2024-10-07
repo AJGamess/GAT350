@@ -33,7 +33,7 @@ void Framebuffer::Clear(const color_t& color)
 
 void Framebuffer::DrawPoint(int x, int y, const color_t& color)
 {
-	if (x >= m_width|| x < 0 || y < 0 || y >= m_height) return;
+	if (x >= m_width || x < 0 || y < 0 || y >= m_height) return;
 	m_buffer[x + y * m_width] = color;
 }
 
@@ -53,12 +53,12 @@ void Framebuffer::DrawRect(int x, int y, int w, int h, const color_t& color)
 	}
 }
 
-void Framebuffer::DrawLineSlope (int x1, int y1, int x2, int y2, const color_t& color)
+void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& color)
 {
 	//y = mx + b
 	int dx = x2 - x1;
 	int dy = y2 - y1;
-	
+
 	if (dx == 0) {
 		if (y1 > y2) std::swap(y1, y2);
 		for (int y = y1; y < y2; y++) {
@@ -68,22 +68,22 @@ void Framebuffer::DrawLineSlope (int x1, int y1, int x2, int y2, const color_t& 
 	else
 	{
 
-	float m = dy / (float)dx;
-	float b = y1 - (m * x1);
-	
-	if (std::abs(dx) > std::abs(dy)) {
-		for (int x = x1; x < x2; x++) {
-			int y = (int)round((m * x) + b);
-			m_buffer[x + y * m_width] = color;
+		float m = dy / (float)dx;
+		float b = y1 - (m * x1);
+
+		if (std::abs(dx) > std::abs(dy)) {
+			for (int x = x1; x < x2; x++) {
+				int y = (int)round((m * x) + b);
+				m_buffer[x + y * m_width] = color;
+			}
 		}
-	}
-	else
-	{
-		for (int y = y1; y < y2; y++) {
-			int x = (int)round((y - b) / m);
-			m_buffer[x + y * m_width] = color;
+		else
+		{
+			for (int y = y1; y < y2; y++) {
+				int x = (int)round((y - b) / m);
+				m_buffer[x + y * m_width] = color;
+			}
 		}
-	}
 	}
 }
 
@@ -108,7 +108,7 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 	int error = dx / 2;
 	int ystep = (y1 < y2) ? 1 : -1;
 
-	for (int x = x1, y = y1; x <= x2; x++){
+	for (int x = x1, y = y1; x <= x2; x++) {
 		steep ? DrawPoint(y, x, color) : DrawPoint(x, y, color);
 		error -= dy;
 		if (error < 0) {
@@ -123,4 +123,36 @@ void Framebuffer::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, c
 	DrawLine(x1, y1, x2, y2, color);
 	DrawLine(x2, y2, x3, y3, color);
 	DrawLine(x3, y3, x1, y1, color);
+}
+
+void Framebuffer::DrawCircle(int xc, int yc, int x, int y, const color_t& color)
+{
+	DrawPoint(xc + x, yc + y, color);
+	DrawPoint(xc - x, yc + y, color);
+	DrawPoint(xc + x, yc - y, color);
+	DrawPoint(xc - x, yc - y, color);
+	DrawPoint(xc + y, yc + x, color);
+	DrawPoint(xc - y, yc + x, color);
+	DrawPoint(xc + y, yc - x, color);
+	DrawPoint(xc - y, yc - x, color);
+}
+
+void Framebuffer::GenerateCircle(int xc, int yc, int radius, const color_t& color)
+{
+	int x = 0;
+	int y = radius;
+	int d = 3 - 2 * radius;
+	DrawCircle(xc, yc, x, y, color);
+	while (y >= x) {
+		if (d > 0) {
+			y--;
+			d = d + 4 * (x - y) + 10;
+		}
+		else {
+			d = d + 4 * x + 6;
+		}
+		x++;
+		// Draw points in all octants
+		DrawCircle(xc, yc, x, y, color);
+	}
 }
