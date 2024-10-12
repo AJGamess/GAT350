@@ -2,6 +2,7 @@
 #include "Framebuffer.h"
 #include "MathUtils.h"
 #include "Image.h"
+#include "PostProcess.h"
 #include <SDL.h>
 #include <iostream>
 
@@ -34,8 +35,9 @@ int main(int argc, char* argv[])
 		//SDL_RenderClear(renderer.m_renderer);
 
 		framebuffer.Clear(color_t{ 0,0,0,255 });
+		
 		Image image;
-		image.Load("Lamb.jpg");
+		image.Load("scenic.jpeg");
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -43,11 +45,12 @@ int main(int argc, char* argv[])
 			int y = rand() % framebuffer.m_height;
 			int x2 = rand() % framebuffer.m_width;
 			int y2 = rand() % framebuffer.m_height;
-			framebuffer.DrawImage(x, y, image);
 			//framebuffer.DrawLine(x, y, x2, y2, { 255,255,255,255 });
 			//framebuffer.DrawPoint(x, y, { 255,255,255,255 });
 		    //framebuffer.DrawRect(10, 10, 100, 100, { 0,255,0,255 });
 		}
+
+		framebuffer.DrawImage(1, 1, image);
 		//framebuffer.GenerateCircle(50, 50, 30, { 255,255,255,255 });
 		//framebuffer.DrawLine(100, 100, 120, 120, { 255,255,255,255 });
 		//framebuffer.DrawTriangle(150, 150, 200, 200, 100, 250, { 255,255,255,255 });
@@ -67,7 +70,19 @@ int main(int argc, char* argv[])
 		CubicPoint(200, 300, 100, 50, mx, my, 500, 400, t, x, y);
 		framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 255,0,0,255 });
 */
+		//PostProcess::Invert(framebuffer.m_buffer);
+		//PostProcess::Monochrome(framebuffer.m_buffer);
+		//PostProcess::Brightness(framebuffer.m_buffer, 200);
+		//PostProcess::ColorBalance(framebuffer.m_buffer, 150, -50, -50);
+		//PostProcess::Noise(framebuffer.m_buffer, 80);
+		//PostProcess::Threshold(framebuffer.m_buffer, 150);
+		//PostProcess::Posterize(framebuffer.m_buffer, 6);
+
+		//PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+		//PostProcess::GuassianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+		//PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 		
+		//PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 10);
 
 		framebuffer.Update();
 		renderer = framebuffer;
