@@ -38,6 +38,11 @@ int main(int argc, char* argv[])
 		
 		Image image;
 		image.Load("scenic.jpeg");
+		
+		SetBlendMode(BlendMode::Normal);
+		Image alphaImage;
+		alphaImage.Load("colors.png");
+		//PostProcess::Alpha(alphaImage.m_buffer, 50);
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -50,18 +55,18 @@ int main(int argc, char* argv[])
 		    //framebuffer.DrawRect(10, 10, 100, 100, { 0,255,0,255 });
 		}
 
+		int mx, my;
+		SDL_GetMouseState(&mx, &my);
+
 		framebuffer.DrawImage(1, 1, image);
+		//framebuffer.DrawImage(1, 1, alphaImage);
 		//framebuffer.GenerateCircle(50, 50, 30, { 255,255,255,255 });
 		//framebuffer.DrawLine(100, 100, 120, 120, { 255,255,255,255 });
 		//framebuffer.DrawTriangle(150, 150, 200, 200, 100, 250, { 255,255,255,255 });
 		
-
-		int mx, my;
-		SDL_GetMouseState(&mx, &my);
-		
-		framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255,0,255,255 });
+		//framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255,0,255,255 });
 		//framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, { 255,0,0,255 });
-		framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, { 0,255,255,0 });
+		//framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, { 0,255,255,0 });
 /*
 		int ticks = SDL_GetTicks();
 		float time = ticks * 0.001f;
@@ -83,6 +88,7 @@ int main(int argc, char* argv[])
 		//PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 		
 		//PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 10);
+		PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 
 		framebuffer.Update();
 		renderer = framebuffer;

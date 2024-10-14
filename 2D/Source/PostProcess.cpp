@@ -101,6 +101,14 @@ namespace PostProcess
 			});
 	}
 
+	void Alpha(std::vector<color_t>& buffer, uint8_t alpha)
+	{
+		std::for_each(buffer.begin(), buffer.end(), [alpha](auto& c)
+			{
+				c.a = alpha;
+			});
+	}
+
 
 	void BoxBlur(std::vector<color_t>& buffer, int width, int height)
 	{
@@ -281,4 +289,56 @@ namespace PostProcess
 			*/
 		}
 	}
+	void Emboss(std::vector<color_t>& buffer, int width, int height)
+	{
+		std::vector<color_t> source = buffer;
+
+		// Emboss kernel (3x3)
+		int k[3][3] =
+		{
+			{ -2, -1, 0 },
+			{ -1,  1, 1 },
+			{  0,  1, 2 }
+		};
+
+		for (int i = 0; i < buffer.size(); i++) {
+			int x = i % width;
+			int y = i / width;
+
+			// Ignore the edges of the image
+			if (x < 1 || x + 1 >= width || y < 1 || y + 1 >= height) continue;
+
+			int r = 0;
+			int g = 0;
+			int b = 0;
+
+			// Apply the 3x3 convolution with the emboss kernel
+			for (int iy = 0; iy < 3; iy++) {
+				for (int ix = 0; ix < 3; ix++) {
+					// Get the current neighboring pixel
+					color_t pixel = source[(x + ix - 1) + (y + iy - 1) * width];
+
+					// Get the corresponding kernel weight
+					int weight = k[iy][ix];
+
+					// Multiply the pixel values by the kernel weight
+					r += pixel.r * weight;
+					g += pixel.g * weight;
+					b += pixel.b * weight;
+				}
+			}
+
+			// Normalize by adding 128 to shift to the middle-gray range
+			r = r + 128;
+			g = g + 128;
+			b = b + 128;
+
+			// Clamp the result to be within valid RGB range [0, 255]
+			color_t& color = buffer[i];
+			color.r = static_cast<uint8_t>(Clamp(r, 0, 255));
+			color.g = static_cast<uint8_t>(Clamp(g, 0, 255));
+			color.b = static_cast<uint8_t>(Clamp(b, 0, 255));
+		}
+	}
+
 }
