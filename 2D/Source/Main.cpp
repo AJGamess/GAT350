@@ -3,6 +3,8 @@
 #include "MathUtils.h"
 #include "Image.h"
 #include "PostProcess.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <SDL.h>
 #include <iostream>
 
@@ -58,7 +60,7 @@ int main(int argc, char* argv[])
 		int mx, my;
 		SDL_GetMouseState(&mx, &my);
 
-		framebuffer.DrawImage(1, 1, image);
+		//framebuffer.DrawImage(1, 1, image);
 		//framebuffer.DrawImage(1, 1, alphaImage);
 		//framebuffer.GenerateCircle(50, 50, 30, { 255,255,255,255 });
 		//framebuffer.DrawLine(100, 100, 120, 120, { 255,255,255,255 });
@@ -88,7 +90,10 @@ int main(int argc, char* argv[])
 		//PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 		
 		//PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 10);
-		PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+		//PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
 
 		framebuffer.Update();
 		renderer = framebuffer;
