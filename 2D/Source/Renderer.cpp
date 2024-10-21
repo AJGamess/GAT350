@@ -17,6 +17,8 @@ void Renderer::CreateWindow(const std::string& name, int width, int height)
 {
 	// create window
 	// returns pointer to window if successful or nullptr if failed
+	m_width = width;
+	m_height = height;
 	m_window = SDL_CreateWindow("Game Engine",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		width, height,

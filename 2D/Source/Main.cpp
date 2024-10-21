@@ -4,23 +4,49 @@
 #include "Image.h"
 #include "PostProcess.h"
 #include "Model.h"
+#include "Transform.h"
+#include "ETime.h"
+#include "Input.h"
+#include "Camera.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL.h>
 #include <iostream>
 
+
 int main(int argc, char* argv[])
 {
+	//initailze
+	Time time;
+	Input input;
+	input.Initialize();
+
 	Renderer renderer;
 	renderer.Initialize();
 	renderer.CreateWindow("2D", 800, 600);
 
-	Framebuffer framebuffer(renderer, 400, 300);
+	SetBlendMode(BlendMode::Normal);
+
+	Camera camera(renderer.m_width, renderer.m_height);
+	camera.SetView(glm::vec3{ 0,0,-20 }, glm::vec3{ 0 });
+	camera.SetProjection(60.0f, 800.0f / 600, 0.1f, 200.0f);
+	Transform cameraTransform = glm::vec3{ 0,0,-20 };
+
+	Framebuffer framebuffer(renderer, 800, 600);
+	
+	vertices_t vertices = { {-5,5,0}, {5,5,0},{-5,-5,0} };
+	//Model model(vertices, { 0,255,0,255 });
+	Transform transform{ {0,0,0},glm::vec3{0,0,45},glm::vec3{3} };
+	Model model;
+	model.Load("torus.obj");
 
 	// main loop
 	bool quit = false;
 	while (!quit)
 	{
+		time.Tick();
+		input.Update();
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
@@ -45,11 +71,12 @@ int main(int argc, char* argv[])
 
 		Image alphaImage;
 		alphaImage.Load("colors.png");
-		SetBlendMode(BlendMode::Multiply);
 		PostProcess::Alpha(alphaImage.m_buffer, 50);
 
-		vertices_t vertices = { {-5,5,0}, {5,5,0},{-5,-5,0} };
-		Model model(vertices, { 0,255,0,255 });
+		
+
+		
+		
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -65,8 +92,8 @@ int main(int argc, char* argv[])
 		int mx, my;
 		SDL_GetMouseState(&mx, &my);
 
-		framebuffer.DrawImage(1, 1, image);
-		framebuffer.DrawImage(mx, my, alphaImage);
+		//framebuffer.DrawImage(1, 1, image);
+		//framebuffer.DrawImage(1, 1, alphaImage);
 		//framebuffer.GenerateCircle(50, 50, 30, { 255,255,255,255 });
 		//framebuffer.DrawLine(100, 100, 120, 120, { 255,255,255,255 });
 		//framebuffer.DrawTriangle(150, 150, 200, 200, 100, 250, { 255,255,255,255 });
@@ -75,9 +102,7 @@ int main(int argc, char* argv[])
 		//framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, { 255,0,0,255 });
 		//framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, { 0,255,255,0 });
 
-		int ticks = SDL_GetTicks();
-		float time = ticks * 0.001f;
-		float t = std::abs(std::sin(time));
+		
 		//int x, y;
 		//CubicPoint(200, 300, 100, 50, mx, my, 500, 400, t, x, y);
 		//framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 255,0,0,255 });
@@ -98,16 +123,29 @@ int main(int argc, char* argv[])
 		//PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 10);
 		//PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 #pragma endregion
+#pragma region model
+		
+		glm::vec3 direction{ 0 };
+		if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
+		if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
+		if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = 1;
+		if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = -1;
+		if (input.GetKeyDown(SDL_SCANCODE_K)) direction.z = 1;
+		if (input.GetKeyDown(SDL_SCANCODE_L)) direction.z = -1;
 
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(40.0f, 40.0f, 0.0f));
-		glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(5));
-		glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 1000), glm::vec3{ 1,1,1 });
+		//cameraTransform.rotation.y = input.GetMousePosition().x * 0.1f;
 
-		modelMatrix = translate * scale * rotate;
+		//glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
 
-		model.Draw(framebuffer, modelMatrix);
+		cameraTransform.position += direction * 70.0f * time.GetDeltaTime();
+		camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
 
+		//transform.position += direction * 100.0f * time.GetDeltaTime();
+		transform.rotation.z += 90 * time.GetDeltaTime();
+		
+		model.Draw(framebuffer, transform.GetMatrix(), camera);
+		
+#pragma endregion
 		framebuffer.Update();
 		renderer = framebuffer;
 
