@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 	Transform cameraTransform = glm::vec3{ 0,0,-20 };
 
 	Framebuffer framebuffer(renderer, 800, 600);
-
+	
 	vertices_t vertices = { {-5,5,0}, {5,5,0},{-5,-5,0} };
 	//Model model(vertices, { 0,255,0,255 });
 	Transform transform{ {0,0,0},glm::vec3{0,0,45},glm::vec3{3} };
@@ -86,10 +86,10 @@ int main(int argc, char* argv[])
 		alphaImage.Load("colors.png");
 		PostProcess::Alpha(alphaImage.m_buffer, 50);
 
+		
 
-
-
-
+		
+		
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 		//framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, { 255,0,0,255 });
 		//framebuffer.DrawCubicCurve(100, 200, 100, 100, 200, 100, 200, 200, { 0,255,255,0 });
 
-
+		
 		//int x, y;
 		//CubicPoint(200, 300, 100, 50, mx, my, 500, 400, t, x, y);
 		//framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 255,0,0,255 });
@@ -137,25 +137,25 @@ int main(int argc, char* argv[])
 		//PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 #pragma endregion
 #pragma region model
-
+		
 		if (input.GetMouseButtonDown(2))
-		{
+		{ 
 			input.SetRelativeMode(true);
+		
+		glm::vec3 direction{ 0 };
+		if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
+		if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
+		if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = 1;
+		if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = -1;
+		if (input.GetKeyDown(SDL_SCANCODE_K)) direction.z = 1;
+		if (input.GetKeyDown(SDL_SCANCODE_L)) direction.z = -1;
 
-			glm::vec3 direction{ 0 };
-			if (input.GetKeyDown(SDL_SCANCODE_RIGHT)) direction.x = 1;
-			if (input.GetKeyDown(SDL_SCANCODE_LEFT)) direction.x = -1;
-			if (input.GetKeyDown(SDL_SCANCODE_UP)) direction.y = 1;
-			if (input.GetKeyDown(SDL_SCANCODE_DOWN)) direction.y = -1;
-			if (input.GetKeyDown(SDL_SCANCODE_K)) direction.z = 1;
-			if (input.GetKeyDown(SDL_SCANCODE_L)) direction.z = -1;
+		//cameraTransform.rotation.x = input.GetMousePosition().x * 0.25f;
+		//cameraTransform.rotation.y = input.GetMousePosition().y * 0.25f;
 
-			cameraTransform.rotation.x = input.GetMousePosition().x * 0.25f;
-			cameraTransform.rotation.y = input.GetMousePosition().y * 0.25f;
+		//glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
 
-			glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
-
-			cameraTransform.position += direction * 70.0f * time.GetDeltaTime();
+		cameraTransform.position += direction * 70.0f * time.GetDeltaTime();
 		}
 		else {
 			input.SetRelativeMode(false);
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
 		for (auto& actor : actors) {
 			model->Draw(framebuffer, transform.GetMatrix(), camera);
 		}
-
+		
 #pragma endregion
 
 

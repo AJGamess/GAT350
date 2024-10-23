@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{fe2280d8-5314-49bc-ae16-ee05d2556374}</ProjectGuid>
+    <ProjectGuid>{D57C782D-A5AD-418F-9426-A1A079DE5772}</ProjectGuid>
     <RootNamespace>My2D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -167,6 +167,7 @@
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\PostProcess.h" />
     <ClInclude Include="Source\Random.h" />
+    <ClInclude Include="Source\Ray.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Transform.h" />
   </ItemGroup>
