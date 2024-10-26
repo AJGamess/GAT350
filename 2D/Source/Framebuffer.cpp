@@ -263,10 +263,10 @@ int Framebuffer::ComputeClipCode(int x, int y)
 {
 	int code = INSIDE;
 
-	if (x < 0)                code |= LEFT;
-	else if (x >= m_width)    code |= RIGHT;
-	if (y < 0)                code |= BOTTOM;
-	else if (y >= m_height)   code |= TOP;
+	if (x < 0)           code |= LEFT;
+    else if (x >= m_width)     code |= RIGHT;
+	if (y < 0)           code |= TOP;
+	else if (y >= m_height)    code |= BOTTOM;
 
 	return code;
 }
@@ -281,7 +281,7 @@ bool Framebuffer::ClipLine(int& x1, int& x2, int& y1, int& y2)
 
 	while (true)
 	{
-		if ((code1 == 0) && (code2 == 0))
+		if (code1 == 0 && code2 == 0)
 		{
 			// Both endpoints lie inside the rectangle
 			accept = true;
@@ -310,14 +310,14 @@ bool Framebuffer::ClipLine(int& x1, int& x2, int& y1, int& y2)
 			if (code_out & TOP)
 			{
 				// Point is above the rectangle
-				x = x1 + (x2 - x1) * (m_width - y1) / (y2 - y1);
-				y = m_height - 1;
+				x = x1 + (x2 - x1) * (0 - y1) / (y2 - y1);
+				y = 0;
 			}
 			else if (code_out & BOTTOM)
 			{
 				// Point is below the rectangle
-				x = x1 + (x2 - x1) * (0 - y1) / (y2 - y1);
-				y = 0;
+				x = x1 + (x2 - x1) * (m_height - y1) / (y2 - y1);
+				y = m_height - 1;
 			}
 			else if (code_out & RIGHT)
 			{
