@@ -8,7 +8,7 @@ void Camera::SetView(const glm::vec3& eye, const glm::vec3& target, const glm::v
 
 void Camera::SetProjection(float fov, float aspect, float near, float far)
 {
-	m_projection = glm::perspective(fov, aspect, near, far);
+	m_projection = glm::perspective(glm::radians(fov), aspect, near, far);
 }
 
 glm::vec3 Camera::ModelToView(const glm::vec3& position) const

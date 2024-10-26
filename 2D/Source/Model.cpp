@@ -33,7 +33,7 @@ void Model::Draw(Framebuffer& framebuffer, const glm::mat4& model, const class C
 		{
 			continue;
 		}
-		framebuffer.DrawTriangle(s1.x, s1.y, s2.x, s2.y, s3.x, s3.y, m_color);
+		framebuffer.DrawTriangle((int)s1.x, (int)s1.y, (int)s2.x, (int)s2.y, (int)s3.x, (int)s3.y, m_color);
 	}
 
 }

@@ -99,6 +99,8 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 
 void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 {
+	if (!ClipLine(x1, x2, y1, y2)) return;
+	
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 
@@ -256,3 +258,98 @@ void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3,
 		DrawLine(sx1, sy1, sx2, sy2, color);
 	}
 }
+
+int Framebuffer::ComputeClipCode(int x, int y)
+{
+	int code = INSIDE;
+
+	if (x < 0)                code |= LEFT;
+	else if (x >= m_width)    code |= RIGHT;
+	if (y < 0)                code |= BOTTOM;
+	else if (y >= m_height)   code |= TOP;
+
+	return code;
+}
+
+bool Framebuffer::ClipLine(int& x1, int& x2, int& y1, int& y2)
+{
+	// Compute region codes for P1, P2
+	int code1 = ComputeClipCode(x1, y1);
+	int code2 = ComputeClipCode(x2, y2);
+
+	bool accept = false;
+
+	while (true)
+	{
+		if ((code1 == 0) && (code2 == 0))
+		{
+			// Both endpoints lie inside the rectangle
+			accept = true;
+			break;
+		}
+		else if (code1 & code2)
+		{
+			// Both endpoints are outside the rectangle in the same region
+			break;
+		}
+		else
+		{
+			// Some segment of the line lies within the rectangle
+			int code_out;
+			int x = 0, y = 0;
+
+			// At least one endpoint is outside the rectangle, pick it
+			if (code1 != 0)
+				code_out = code1;
+			else
+				code_out = code2;
+
+			// Find intersection point using formulas:
+			// y = y1 + slope * (x - x1)
+			// x = x1 + (1 / slope) * (y - y1)
+			if (code_out & TOP)
+			{
+				// Point is above the rectangle
+				x = x1 + (x2 - x1) * (m_width - y1) / (y2 - y1);
+				y = m_height - 1;
+			}
+			else if (code_out & BOTTOM)
+			{
+				// Point is below the rectangle
+				x = x1 + (x2 - x1) * (0 - y1) / (y2 - y1);
+				y = 0;
+			}
+			else if (code_out & RIGHT)
+			{
+				// Point is to the right of rectangle
+				y = y1 + (y2 - y1) * (m_width - x1) / (x2 - x1);
+				x = m_width - 1;
+			}
+			else if (code_out & LEFT)
+			{
+				// Point is to the left of rectangle
+				y = y1 + (y2 - y1) * (0 - x1) / (x2 - x1);
+				x = 0;
+			}
+
+			// Replace the outside point with the intersection point
+			// and get the new region code
+			if (code_out == code1)
+			{
+				x1 = x;
+				y1 = y;
+				code1 = ComputeClipCode(x1, y1);
+			}
+			else
+			{
+				x2 = x;
+				y2 = y;
+				code2 = ComputeClipCode(x2, y2);
+			}
+		}
+	}
+
+	return accept;
+}
+
+
