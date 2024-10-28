@@ -41,15 +41,49 @@ int main(int argc, char* argv[])
 
 	Scene scene;
 
-	std::shared_ptr<Material> material = std::make_shared<Material>(color3_t{ 0,0,1 });
-	std::shared_ptr<Material> material2 = std::make_shared<Material>(color3_t{ 0,1,0 });
+	std::shared_ptr<Material> green = std::make_shared<Material>(color3_t{ 0,1,0 });
+	std::shared_ptr<Material> gray = std::make_shared<Material>(color3_t{ 0.5f });
+	std::shared_ptr<Material> red = std::make_shared<Material>(color3_t{ 1, 0, 0 });
+	std::shared_ptr<Material> blue = std::make_shared<Material>(color3_t{ 0, 0, 1 });
 
-	auto sphere = std::make_unique<Sphere>(glm::vec3{ 0,0,-40 }, 2.0f, material);
+	std::vector<std::shared_ptr<Material>> materials;
+
+	materials.push_back(green);
+	//materials.push_back(gray);
+	materials.push_back(red);
+	materials.push_back(blue);
+
+
+	/*
+	auto sphere = std::make_unique<Sphere>(glm::vec3{ 0,0,-40 }, 2.0f, blue);
 	scene.AddObject(std::move(sphere));
-	
-	auto plane = std::make_unique<Plane>(glm::vec3{ 0, 1, 0 }, glm::vec3{ 0.4f, 0.4f, 0 }, material2);
+	*/
+	/*
+	auto plane = std::make_unique<Plane>(glm::vec3{ 0, 1, 0 }, glm::vec3{ 0.4f, 0.4f, 0 }, green);
 	scene.AddObject(std::move(plane));
-	
+	*/
+
+	for (int i = 0; i < 20; i++) {
+		
+		std::shared_ptr<Material> random_material = materials[random(0, materials.size())];
+
+		//for debug purposes
+		if (random_material) {
+			color3_t color = random_material->GetColor();
+			std::cout << "Selected Material Color: (" << color.r << ", " << color.g << ", " << color.b << ")\n";
+		}
+		else {
+			std::cout << "random_material is null.\n";
+		}
+
+		float random_radius = randomf(0.0f, 2.0f);
+
+		auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), random_radius, random_material);
+		scene.AddObject(std::move(object));
+	}
+	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
+	scene.AddObject(std::move(plane));
+
 	// main loop
 	bool quit = false;
 	while (!quit)
