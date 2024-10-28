@@ -12,6 +12,7 @@
 #include "Random.h"
 #include "Tracer.h"
 #include "Scene.h"
+#include "Plane.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -40,9 +41,14 @@ int main(int argc, char* argv[])
 
 	Scene scene;
 
-	std::shared_ptr<Material> material = std::make_shared<Material>(color3_t{ 1,0,0 });
-	auto object = std::make_unique<Sphere>(glm::vec3{ 0,0,-40 }, 2.0f, material);
-	scene.AddObject(std::move(object));
+	std::shared_ptr<Material> material = std::make_shared<Material>(color3_t{ 0,0,1 });
+	std::shared_ptr<Material> material2 = std::make_shared<Material>(color3_t{ 0,1,0 });
+
+	auto sphere = std::make_unique<Sphere>(glm::vec3{ 0,0,-40 }, 2.0f, material);
+	scene.AddObject(std::move(sphere));
+	
+	auto plane = std::make_unique<Plane>(glm::vec3{ 0, 1, 0 }, glm::vec3{ 0.4f, 0.4f, 0 }, material2);
+	scene.AddObject(std::move(plane));
 	
 	// main loop
 	bool quit = false;

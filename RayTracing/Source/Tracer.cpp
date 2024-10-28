@@ -5,12 +5,13 @@
 
 color3_t Tracer::Trace(Scene& scene, const ray_t& ray)
 {
+
 	//check for object hit in scene
 	for (auto& object : scene.m_objects)
 	{
 		if (object->Hit(ray))
 		{
-			return{ 1,0,0 };
+			return object->GetMaterial().lock()->GetColor();
 		}
 	}
 
