@@ -23,6 +23,7 @@
 
 int main(int argc, char* argv[])
 {
+	srand((unsigned int)time(NULL));
 	//initailze
 	Time time;
 
@@ -41,17 +42,21 @@ int main(int argc, char* argv[])
 
 	Scene scene;
 
-	std::shared_ptr<Material> green = std::make_shared<Material>(color3_t{ 0,1,0 });
-	std::shared_ptr<Material> gray = std::make_shared<Material>(color3_t{ 0.5f });
-	std::shared_ptr<Material> red = std::make_shared<Material>(color3_t{ 1, 0, 0 });
-	std::shared_ptr<Material> blue = std::make_shared<Material>(color3_t{ 0, 0, 1 });
+	std::shared_ptr<Material> green = std::make_shared<Lambertian>(color3_t{ 0,1,0 });
+	std::shared_ptr<Material> gray =  std::make_shared<Lambertian>(color3_t{ 0.5f });
+	std::shared_ptr<Material> red =   std::make_shared<Lambertian>(color3_t{ 1, 0, 0 });
+	std::shared_ptr<Material> metalred =   std::make_shared<Metal>(color3_t{ 1, 0, 0 }, 0.3f);
+	std::shared_ptr<Material> blue =  std::make_shared<Lambertian>(color3_t{ 0, 0, 1 });
+	std::shared_ptr<Material> metalblue =  std::make_shared<Metal>(color3_t{ 0, 0, 1 }, 0.1f);
 
 	std::vector<std::shared_ptr<Material>> materials;
 
 	materials.push_back(green);
 	//materials.push_back(gray);
-	materials.push_back(red);
-	materials.push_back(blue);
+	//materials.push_back(red);
+	materials.push_back(metalred);
+	//materials.push_back(blue);
+	materials.push_back(metalblue);
 
 
 	/*
@@ -62,6 +67,9 @@ int main(int argc, char* argv[])
 	auto plane = std::make_unique<Plane>(glm::vec3{ 0, 1, 0 }, glm::vec3{ 0.4f, 0.4f, 0 }, green);
 	scene.AddObject(std::move(plane));
 	*/
+
+	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
+	scene.AddObject(std::move(plane));
 
 	for (int i = 0; i < 20; i++) {
 		
@@ -76,13 +84,13 @@ int main(int argc, char* argv[])
 			std::cout << "random_material is null.\n";
 		}
 
-		float random_radius = randomf(0.0f, 2.0f);
+		float random_radius = randomf(1.0f, 2.0f);
 
 		auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), random_radius, random_material);
 		scene.AddObject(std::move(object));
 	}
-	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
-	scene.AddObject(std::move(plane));
+
+	
 
 	// main loop
 	bool quit = false;

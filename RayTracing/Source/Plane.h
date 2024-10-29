@@ -14,7 +14,7 @@ public:
 	{
 	}
 
-	bool Hit(const ray_t& ray);
+	bool Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance);
 
 private:
 	glm::vec3 m_center{0};
