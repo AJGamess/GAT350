@@ -4,7 +4,7 @@
 #include "Tracer.h"
 #include <iostream>
 
-void Scene::Render(Framebuffer& framebuffer, const Camera& camera)
+void Scene::Render(class Framebuffer& framebuffer, const class Camera& camera, int numSamples, int depth)
 {
 	for (int y = 0; y < framebuffer.m_height; y++)
 	{
@@ -17,7 +17,7 @@ void Scene::Render(Framebuffer& framebuffer, const Camera& camera)
 
 			ray_t ray = camera.GetRay(point);
 
-			color3_t color = Tracer::Trace(*this, ray, 0.001f, 100.0f);
+			color3_t color = Tracer::Trace(*this, ray, 0.001f, 100.0f, depth);
 			//color4_t color = { 1,0,0,1 };
 			framebuffer.DrawPoint(x, y, ColorConvert(color));
 		}

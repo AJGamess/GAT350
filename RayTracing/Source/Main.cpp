@@ -89,7 +89,6 @@ int main(int argc, char* argv[])
 		auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), random_radius, random_material);
 		scene.AddObject(std::move(object));
 	}
-
 	
 
 	// main loop
@@ -116,7 +115,7 @@ int main(int argc, char* argv[])
 
 		framebuffer.Clear(ColorConvert(color4_t{ 0,1,0,1 }));
 
-		scene.Render(framebuffer, camera);
+		scene.Render(framebuffer, camera, 10, 10);
 
 		framebuffer.Update();
 		renderer = framebuffer;
