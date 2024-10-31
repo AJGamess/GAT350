@@ -30,6 +30,10 @@ color3_t Tracer::Trace(Scene& scene, const ray_t& ray, float minDistance, float 
 		if (raycastHit.material.lock()->Scatter(ray, raycastHit, attenuation, scatter)) {
 			return attenuation * Trace(scene, scatter, minDistance, maxDistance, depth - 1);
 		}
+		else
+		{
+			return raycastHit.material.lock()->GetEmissive();
+		}
 		//return raycastHit.normal;
 		raycastHit.material.lock()->GetColor();
 	}
@@ -37,7 +41,7 @@ color3_t Tracer::Trace(Scene& scene, const ray_t& ray, float minDistance, float 
 	//sky
 	glm::vec3 direction = glm::normalize(ray.direction);
 	float t = (direction.y + 1) * 0.5f;
-	color3_t color = Lerp(color3_t{ 0,1,1 }, color3_t{ 1.0f,1.0f,1.0f }, t);
+	color3_t color = Lerp(color3_t{ 0,1,1 }, color3_t{ 0.5f,0.5f,0.5f }, t);
 
 	return color;
 }

@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 	Scene scene;
 
 	std::shared_ptr<Material> green = std::make_shared<Lambertian>(color3_t{ 0,1,0 });
+	std::shared_ptr<Material> purple = std::make_shared<Emissive>(color3_t{ 1,0,1 }, 3.0f);
 	std::shared_ptr<Material> white = std::make_shared<Lambertian>(color3_t{ 1,1,1 });
 	std::shared_ptr<Material> gray =  std::make_shared<Lambertian>(color3_t{ 0.5f });
 	std::shared_ptr<Material> red =   std::make_shared<Lambertian>(color3_t{ 1, 0, 0 });
@@ -60,6 +61,7 @@ int main(int argc, char* argv[])
 	//materials.push_back(blue);
 	materials.push_back(metalblue);
 	materials.push_back(dielectricwhite);
+	materials.push_back(purple);
 
 
 	/*
@@ -74,7 +76,7 @@ int main(int argc, char* argv[])
 	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
 	scene.AddObject(std::move(plane));
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 20; i++) {
 		
 		std::shared_ptr<Material> random_material = materials[random(0, materials.size())];
 
@@ -118,7 +120,7 @@ int main(int argc, char* argv[])
 
 		framebuffer.Clear(ColorConvert(color4_t{ 0,1,0,1 }));
 
-		scene.Render(framebuffer, camera, 50, 25);
+		scene.Render(framebuffer, camera, 50, 35);
 
 		framebuffer.Update();
 		renderer = framebuffer;
