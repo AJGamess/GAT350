@@ -12,7 +12,7 @@ public:
 	color3_t& GetColor() { return m_albedo; }
 
 protected:
-	color3_t m_albedo{1};
+	color3_t m_albedo{ 1 };
 };
 
 class Lambertian : public Material
@@ -26,8 +26,17 @@ class Metal : public Material
 {
 public:
 	Metal(const glm::vec3& albedo, float fuzz) : Material{ albedo }, m_fuzz{ fuzz } {}
-	virtual bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scatter) const override;
+	bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scatter) const override;
 
 protected:
 	float m_fuzz = 0;
+};
+
+class Dielectric : public Material
+{
+public:
+	Dielectric(const glm::vec3& albedo, float refractiveIndex) : Material{ albedo }, m_refractiveIndex{ refractiveIndex } {}
+	bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scatter) const override;
+protected:
+	float m_refractiveIndex = 0;
 };
