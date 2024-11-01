@@ -13,6 +13,7 @@
 #include "Tracer.h"
 #include "Scene.h"
 #include "Plane.h"
+#include "Triangle.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -73,10 +74,13 @@ int main(int argc, char* argv[])
 	scene.AddObject(std::move(plane));
 	*/
 
+
 	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
 	scene.AddObject(std::move(plane));
 
-	for (int i = 0; i < 20; i++) {
+	
+
+	for (int i = 0; i < 0; i++) {
 		
 		std::shared_ptr<Material> random_material = materials[random(0, materials.size())];
 
@@ -94,6 +98,9 @@ int main(int argc, char* argv[])
 		auto object = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), random_radius, random_material);
 		scene.AddObject(std::move(object));
 	}
+	
+	auto triangle = std::make_unique<Triangle>(glm::vec3{ -3, 0, 0 }, glm::vec3{ 0, 3, 0 }, glm::vec3{ 3, 0, 0 }, green);
+	scene.AddObject(std::move(triangle));
 	
 
 	// main loop

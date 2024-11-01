@@ -20,7 +20,7 @@ bool Metal::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& 
         attenuation = m_albedo;
 
         // check that reflected ray is going away from surface normal (dot product > 0)
-        return Dot(scatter.direction, raycastHit.normal) > 0; //<dot product of scattered ray direction and raycast hit normal> 
+        return glm::dot(scatter.direction, raycastHit.normal) > 0; //<dot product of scattered ray direction and raycast hit normal> 
 }
 
 bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scattered) const
@@ -33,20 +33,20 @@ bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color
     {
         outNormal = raycastHit.normal;
         ni_over_nt = 1.0f / m_refractiveIndex;
-        cosine = -glm::dot(ray.direction, raycastHit.normal) / ray.direction.length();
+        cosine = -glm::dot(ray.direction, raycastHit.normal) / glm::length(ray.direction);
 
     }
     else
     {
         outNormal = -raycastHit.normal;
         ni_over_nt = m_refractiveIndex;
-        cosine = m_refractiveIndex * glm::dot(ray.direction, raycastHit.normal) / ray.direction.length();
+        cosine = m_refractiveIndex * glm::dot(ray.direction, raycastHit.normal) / glm::length(ray.direction);
     }
 
     glm::vec3 refracted;
     float reflectProbability = 1.0f;
 
-    if (Refract(ray.direction, raycastHit.normal, m_refractiveIndex, refracted))
+    if (Refract(ray.direction, outNormal, ni_over_nt, refracted))
     {
         reflectProbability = Schlick(cosine, m_refractiveIndex);
     }
