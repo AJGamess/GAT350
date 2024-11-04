@@ -5,11 +5,24 @@
 #include "Model.h"
 #include "Framebuffer.h"
 #include "Camera.h"
+#include "Triangle.h"
 
-void Model::Draw(Framebuffer& framebuffer, const glm::mat4& model, const class Camera& camera)
+bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance)
 {
 	
+	// check cast ray with mesh triangles 
+	for (size_t i = 0; i < m_vertices.size(); i += 3)
+	{
+		Triangle triangle{ m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], m_material };
+		if (triangle.Hit(ray, raycastHit, minDistance, maxDistance))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
+
 bool Model::Load(const std::string& filename)
 {
 	// open file using ifstream (input file stream)

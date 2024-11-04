@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
 	Tracer tracer;
 
 	Renderer renderer;
+
 	renderer.Initialize();
 	renderer.CreateWindow("RayTracing", 800, 600);
 
@@ -39,7 +40,7 @@ int main(int argc, char* argv[])
 	Framebuffer framebuffer(renderer, 800, 600);
 
 	Camera camera{ 70.0f, framebuffer.m_width / (float)framebuffer.m_height };
-	camera.SetView({ 0,0,-20 }, { 0,0,0 });
+	camera.SetView({ 0,10,-10 }, { 0,0,0 });
 
 	Scene scene;
 
@@ -64,6 +65,9 @@ int main(int argc, char* argv[])
 	materials.push_back(dielectricwhite);
 	materials.push_back(purple);
 
+	auto model = std::make_unique<Model>(green);
+	model->Load("torus.obj");
+	scene.AddObject(std::move(model));
 
 	/*
 	auto sphere = std::make_unique<Sphere>(glm::vec3{ 0,0,-40 }, 2.0f, blue);
@@ -75,8 +79,8 @@ int main(int argc, char* argv[])
 	*/
 
 
-	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
-	scene.AddObject(std::move(plane));
+	//auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, gray);
+	//scene.AddObject(std::move(plane));
 
 	
 
@@ -99,9 +103,10 @@ int main(int argc, char* argv[])
 		scene.AddObject(std::move(object));
 	}
 	
-	auto triangle = std::make_unique<Triangle>(glm::vec3{ -3, 0, 0 }, glm::vec3{ 0, 3, 0 }, glm::vec3{ 3, 0, 0 }, green);
-	scene.AddObject(std::move(triangle));
-	
+	//auto triangle = std::make_unique<Triangle>(glm::vec3{ -3, 0, 0 }, glm::vec3{ 0, 3, 0 }, glm::vec3{ 3, 0, 0 }, green);
+	//scene.AddObject(std::move(triangle));
+
+	scene.Render(framebuffer, camera, 1, 1);
 
 	// main loop
 	bool quit = false;
@@ -125,9 +130,7 @@ int main(int argc, char* argv[])
 		//SDL_SetRenderDrawColor(renderer.m_renderer, 0, 0, 0, 0);
 		//SDL_RenderClear(renderer.m_renderer);
 
-		framebuffer.Clear(ColorConvert(color4_t{ 0,1,0,1 }));
-
-		scene.Render(framebuffer, camera, 50, 35);
+		//framebuffer.Clear(ColorConvert(color4_t{ 0,1,0,1 }));
 
 		framebuffer.Update();
 		renderer = framebuffer;
