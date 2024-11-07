@@ -12,15 +12,15 @@ bool Lambertian::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color
 
 bool Metal::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scatter) const
 {
-    glm::vec3 reflected = Reflect(ray.direction, raycastHit.normal); //<Reflect() function with raycast hit direction and normal>
+    glm::vec3 reflected = Reflect(ray.direction, glm::normalize(raycastHit.normal));
 
-        // set scattered ray from reflected ray + random point in sphere (fuzz = 0 no randomness, fuzz = 1 random reflected)
-        // a mirror has a fuzz value of 0 and a diffused metal surface a higher value
-        scatter = ray_t{ raycastHit.point, reflected + (randomOnUnitSphere() * m_fuzz) };
-        attenuation = m_albedo;
+    // set scattered ray from reflected ray + random point in sphere (fuzz = 0 no randomness, fuzz = 1 random reflected)
+    // a mirror has a fuzz value of 0 and a diffused metal surface a higher value
+    scatter = ray_t{ raycastHit.point, reflected + (randomOnUnitSphere() * m_fuzz) };
+    attenuation = m_albedo;
 
-        // check that reflected ray is going away from surface normal (dot product > 0)
-        return glm::dot(scatter.direction, raycastHit.normal) > 0; //<dot product of scattered ray direction and raycast hit normal> 
+    // check that reflected ray is going away from surface normal (dot product > 0)
+    return glm::dot(scatter.direction, raycastHit.normal) > 0;
 }
 
 bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scattered) const
@@ -29,15 +29,17 @@ bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color
     float ni_over_nt;
     float cosine;
 
+    // ray hits inside of surface
     if (glm::dot(ray.direction, raycastHit.normal) < 0)
     {
+        // ray hits outside of surface
         outNormal = raycastHit.normal;
         ni_over_nt = 1.0f / m_refractiveIndex;
         cosine = -glm::dot(ray.direction, raycastHit.normal) / glm::length(ray.direction);
-
     }
     else
     {
+        // flip hit normal (points inward)
         outNormal = -raycastHit.normal;
         ni_over_nt = m_refractiveIndex;
         cosine = m_refractiveIndex * glm::dot(ray.direction, raycastHit.normal) / glm::length(ray.direction);
@@ -45,15 +47,14 @@ bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color
 
     glm::vec3 refracted;
     float reflectProbability = 1.0f;
-
     if (Refract(ray.direction, outNormal, ni_over_nt, refracted))
     {
         reflectProbability = Schlick(cosine, m_refractiveIndex);
     }
+
     glm::vec3 reflected = Reflect(ray.direction, raycastHit.normal);
 
     scattered = (randomf() < reflectProbability) ? ray_t{ raycastHit.point, reflected } : ray_t{ raycastHit.point, refracted };
-
     attenuation = m_albedo;
 
     return true;
