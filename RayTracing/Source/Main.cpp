@@ -23,7 +23,53 @@
 #include <memory>
 
 void CornellBox(Scene& scene) {
+	//Cube object material works with Emissive so this will do as light source
+	std::shared_ptr<Material> lightsource = std::make_shared<Emissive>(color3_t{ 1,1,1 }, 3.0f);
+	
+	//Use for spheres
+	std::shared_ptr<Material> dielectricwhite = std::make_shared<Dielectric>(color3_t{ 1, 1, 1 }, 1.5f);
+	std::shared_ptr<Material> metalblue = std::make_shared<Metal>(color3_t{ 0, 0, 1 }, 0.1f);
+	std::shared_ptr<Material> yellow = std::make_shared<Lambertian>(color3_t{ 1, 1, 0 });
 
+	//Use for the planes
+	std::shared_ptr<Material> green = std::make_shared<Lambertian>(color3_t{ 0,1,0 });
+	std::shared_ptr<Material> white = std::make_shared<Lambertian>(color3_t{ 1,1,1 });
+	std::shared_ptr<Material> red = std::make_shared<Lambertian>(color3_t{ 1, 0, 0 });
+
+	std::vector<std::shared_ptr<Material>> sphere_materials;
+
+	sphere_materials.push_back(dielectricwhite);
+	sphere_materials.push_back(metalblue);
+	sphere_materials.push_back(yellow);
+
+	auto backwall = std::make_unique<Plane>(Transform{ glm::vec3{ 20, 0, 60 }, glm::vec3{ 0, -90, 90 } }, white);
+	scene.AddObject(std::move(backwall));
+	
+	auto floor = std::make_unique<Plane>(Transform{ glm::vec3{ 0, -20, 0 }, glm::vec3{ 0, 0, 0 } }, white);
+	scene.AddObject(std::move(floor));
+	
+	auto ceiling = std::make_unique<Plane>(Transform{ glm::vec3{ 0, 20, 0 }, glm::vec3{ 0, 0, 0 } }, white);
+	scene.AddObject(std::move(ceiling));
+	
+	auto rightwall = std::make_unique<Plane>(Transform{ glm::vec3{ 20, 0, 0 }, glm::vec3{ 0, 0, 90 } }, green);
+	scene.AddObject(std::move(rightwall));
+	
+	auto leftwall = std::make_unique<Plane>(Transform{ glm::vec3{ -20, 0, 0 }, glm::vec3{ 0, 0, -90 } }, red);
+	scene.AddObject(std::move(leftwall));
+
+	auto model = std::make_unique<Model>(Transform{ glm::vec3{ 0,25,30 }, glm::vec3{ 0, 0, 0 },	glm::vec3{ 9 } }, lightsource);
+	model->Load("Model/cube.obj");
+	scene.AddObject(std::move(model));
+
+	for (int i = 0; i < 3; i++) {
+
+		std::shared_ptr<Material> sphere = sphere_materials[i];
+
+		float random_radius = randomf(1.0f, 2.0f);
+
+		auto object = std::make_unique<Sphere>(Transform{ glm::vec3{ random(glm::vec3{ -5.0f }, glm::vec3{ 4.0f })} }, randomf(1.0f, 3.0f), sphere);
+		scene.AddObject(std::move(object));
+	}
 }
 
 void InItScene(Scene& scene) {
@@ -65,7 +111,7 @@ void InItScene(Scene& scene) {
 	*/
 
 
-	auto plane = std::make_unique<Plane>(Transform{ glm::vec3{ 0, -2, 0 }, glm::vec3{ 0, 0, 90 } }, gray);
+	auto plane = std::make_unique<Plane>(Transform{ glm::vec3{ 0, -2, 0 }, glm::vec3{ 0, 0, 0 } }, gray);
 	scene.AddObject(std::move(plane));
 
 
@@ -163,11 +209,12 @@ int main(int argc, char* argv[])
 	camera.SetView({ 0,0,-20 }, { 0,0,0 });
 
 	Scene scene;
-	InItScene(scene);
+	//InItScene(scene);
 	//InitScene01(scene, camera);
+	CornellBox(scene);
 
 	scene.Update();
-	scene.Render(framebuffer, camera, 10, 10);
+	scene.Render(framebuffer, camera, 200, 50);
 	framebuffer.Update();
 
 	// main loop
