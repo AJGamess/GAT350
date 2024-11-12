@@ -142,8 +142,10 @@ void InItScene(Scene& scene) {
 
 void InitScene01(Scene& scene, Camera& camera)
 {
-	camera.SetFOV(20.0f);
-	camera.SetView({ 13, 2, 3 }, { 0, 0, 0 });
+	camera.SetFOV(40.0f);
+	camera.SetView({ 15, 5, 4 }, { 0, 0, 0 });
+
+	scene.SetSky(HSVtoRGB(40, 1, 1), HSVtoRGB(0, 0, 1));
 
 	auto ground_material = std::make_shared<Lambertian>(color3_t(0.5f));
 	scene.AddObject(std::make_unique<Plane>(Transform{ glm::vec3{ 0 } }, ground_material));
@@ -179,12 +181,12 @@ void InitScene01(Scene& scene, Camera& camera)
 	}
 
 	auto material1 = std::make_shared<Dielectric>(color3_t{ 1 }, 1.5f);
-	scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{ 0, 1, 0 } }, 1.0f, material1));
+	scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{ 0, 1, 4 } }, 1.5f, material1));
 
-	auto material2 = std::make_shared<Lambertian>(color3_t(0.4f, 0.2f, 0.1f));
-	scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{ -4, 1, 0 } }, 1.0f, material2));
+	auto material2 = std::make_shared<Lambertian>(color3_t(0.47f, 0.2f, 0.5f));
+	scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{ -7, 1, 0 } }, 0.7f, material2));
 
-	auto material3 = std::make_shared<Metal>(color3_t(0.7f, 0.6f, 0.5f), 0.0f);
+	auto material3 = std::make_shared<Metal>(color3_t(0.2f, 0.1f, 0.8f), 0.0f);
 	scene.AddObject(std::make_unique<Sphere>(Transform{ glm::vec3{ 4, 1, 0 } }, 1.0f, material3));
 }
 
@@ -210,11 +212,11 @@ int main(int argc, char* argv[])
 
 	Scene scene;
 	//InItScene(scene);
-	//InitScene01(scene, camera);
-	CornellBox(scene);
+	InitScene01(scene, camera);
+	//CornellBox(scene);
 
 	scene.Update();
-	scene.Render(framebuffer, camera, 200, 50);
+	scene.Render(framebuffer, camera, 80, 6);
 	framebuffer.Update();
 
 	// main loop
