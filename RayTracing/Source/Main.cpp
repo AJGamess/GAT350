@@ -140,7 +140,7 @@ void InItScene(Scene& scene) {
 
 }
 
-void InitScene01(Scene& scene, Camera& camera)
+void InitSceneFinal(Scene& scene, Camera& camera)
 {
 	camera.SetFOV(40.0f);
 	camera.SetView({ 15, 5, 4 }, { 0, 0, 0 });
@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
 
 	Scene scene;
 	//InItScene(scene);
-	InitScene01(scene, camera);
+	InitSceneFinal(scene, camera);
 	//CornellBox(scene);
 
 	scene.Update();
